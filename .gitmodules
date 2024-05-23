@@ -1,0 +1,3 @@
+[submodule "models/trento"]
+	path = models/trento
+	url = https://github.com/DusanZigic/trento.git
