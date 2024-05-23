@@ -230,7 +230,7 @@ def check_execs():
 	for root, dirs, files in walk(src_dir):
 		if 'DREENAA' in files: dreena_check = True
 	if not dreena_check:
-		call('g++ DREENAA/*.cpp -fopenmp -O3 -o DREENAA', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
+		call('g++ source/*.cpp -fopenmp -O3 -o DREENAA', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
 		dreena_check = False
 		for root, dirs, files in walk(src_dir):
 			if 'DREENAA' in files: dreena_check = True
