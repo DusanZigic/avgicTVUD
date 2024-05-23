@@ -20,7 +20,7 @@ def check_install(comp):
 #######################################################################################
 def check_version(comp):
 	temp_file = open('response.info', 'w')
-	call(comp + ' --version', shell=True, stdout=temp_file, stderr=temp_file)
+	call(f'{comp} --version', shell=True, stdout=temp_file, stderr=temp_file)
 	temp_file.close()
 	with open('response.info', 'r') as f:
 		version = f.readline().split()[-1]
@@ -37,7 +37,7 @@ def check_module(mdl):
 #######################################################################################
 def check_libs(lib):
 	temp_file = open('response.info', 'w')
-	call('dpkg -s lib%s-dev' % lib, shell=True, stdout=temp_file, stderr=temp_file)
+	call(f'dpkg -s lib{lib}-dev', shell=True, stdout=temp_file, stderr=temp_file)
 	temp_file.close()
 	if 'not installed' in open('response.info').readline():
 		remove('response.info')
@@ -54,7 +54,7 @@ def check_prerequisites():
 		return False
 	for mdl in ['numpy', 'scipy', 'cython', 'h5py']:
 		if not check_module(mdl):
-			print('Error: python module ' + mdl + ' not installed. Aborting...')
+			print(f'Error: python module {mdl} not installed. Aborting...')
 			return False
 
 	#checking for c compilers:
@@ -75,7 +75,7 @@ def check_prerequisites():
 
 	#checking for g++ compiler and it's version:
 	if not check_install('g++'):
-		print('Error: g++ not insatlled. Aborting...')
+		print('Error: g++ not installed. Aborting...')
 		return False
 	if check_version('g++') < 5.0:
 		print('Error: g++ version 5.0+ needed. Aborting...')
@@ -102,7 +102,7 @@ def check_prerequisites():
 	for lib in ['boost', 'hdf5', 'gsl']:
 		if not check_libs(lib):
 			lib_check = False
-			print('Error: ' + lib + ' library not installed. Aborting...')
+			print(f'Error: {lib} library not installed. Aborting...')
 	if not lib_check: return False
 
 	return True
@@ -220,7 +220,7 @@ def check_execs():
 	if not path.exists(path.join(src_dir, 'analyse.py')): 		 analysis_check = False
 	if not path.exists(path.join(src_dir, 'reference_flow.py')): analysis_check = False
 	if not analysis_check:
-		print('Error: could not find analysis scripts. Aborting...')
+		print('Error: unable to find analysis scripts. Aborting...')
 		compile_file.close()
 		return False
 
@@ -230,31 +230,15 @@ def check_execs():
 	for root, dirs, files in walk(src_dir):
 		if 'DREENAA' in files: dreena_check = True
 	if not dreena_check:
-		call('g++ DREENAAv9.0m/*.cpp -fopenmp -O3 -o DREENAA', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
+		call('g++ DREENAA/*.cpp -fopenmp -O3 -o DREENAA', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
 		dreena_check = False
 		for root, dirs, files in walk(src_dir):
 			if 'DREENAA' in files: dreena_check = True
 		if not dreena_check:
-			print('Error: could not DREENAA source code. Aborting...')
+			print('Error: unable to compile DREENA-A source code. Aborting...')
 			compile_file.close()
 			return False
 	
-	#checking for DSSFFs executables:
-	src_dir = path.join(model_dir, 'dreena', 'DSSFFsV5.0m')
-	dssffs_check = False
-	for root, dirs, files in walk(src_dir):
-		if 'DSSFFs'  in files: dssffs_check = True
-	if not dssffs_check:
-		call('g++ source/*.cpp -fopenmp -O3 -o DSSFFs', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
-		dssffs_check = False
-		for root, dirs, files in walk(src_dir):
-			if 'DSSFFs'  in files: dssffs_check = True
-		if not dssffs_check:
-			print('Error: could not DSSFFs source code. Aborting...')
-			compile_file.close()
-			return False
-
-
 	compile_file.close()
 	remove(path.join(model_dir, 'compile.info'))
 	return True
@@ -270,7 +254,6 @@ def recompile():
 	rmtree(path.join(models_dir, 'osu-hydro',             'build'))   #hydro
 	rmtree(path.join(models_dir, 'urqmd-afterburner',     'build'))   #hydro
 	remove(path.join(models_dir, 'dreena',                'DREENAA')) #dreena
-	remove(path.join(models_dir, 'dreena', 'DSSFFsV5.0m', 'DSSFFs'))  #DSSFFs
 
 	if not check_execs(): return False
 
