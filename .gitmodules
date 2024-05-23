@@ -1,3 +1,6 @@
 [submodule "models/trento"]
 	path = models/trento
 	url = https://github.com/DusanZigic/trento.git
+[submodule "models/freestream"]
+	path = models/freestream
+	url = https://github.com/DusanZigic/freestream.git
