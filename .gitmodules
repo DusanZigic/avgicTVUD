@@ -4,3 +4,6 @@
 [submodule "models/freestream"]
 	path = models/freestream
 	url = https://github.com/DusanZigic/freestream.git
+[submodule "models/osu-hydro"]
+	path = models/osu-hydro
+	url = https://github.com/DusanZigic/osu-hydro.git
