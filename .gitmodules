@@ -10,3 +10,6 @@
 [submodule "models/frzout"]
 	path = models/frzout
 	url = https://github.com/DusanZigic/frzout.git
+[submodule "models/urqmd-afterburner"]
+	path = models/urqmd-afterburner
+	url = https://github.com/DusanZigic/urqmd-afterburner.git
