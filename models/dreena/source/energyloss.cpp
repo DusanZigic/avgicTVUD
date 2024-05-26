@@ -1280,10 +1280,12 @@ void energyLoss::calculateAvgPathlenTemps(const std::vector<double> &pathLenghDi
 
 int energyLoss::exportResults(const std::string &pName, const std::vector<std::vector<double>> &RAADist, const std::vector<double> avgPathLength, const std::vector<double> avgTemp)
 {
+	std::string p_name = pName; std::transform(p_name.begin(), p_name.end(), p_name.begin(), ::tolower);
+
 	std::vector<std::string> header;
 	header.push_back("#collision_system: " + m_collsys);
 	header.push_back("#collision_energy: " + m_sNN);
-	header.push_back("#particle_type: " + pName);
+	header.push_back("#particle_type: " + p_name);
 	header.push_back("#centrality: " + m_centrality);
 
 	std::stringstream xbSStr; xbSStr << std::fixed << std::setprecision(1) << m_xB;
@@ -1309,7 +1311,7 @@ int energyLoss::exportResults(const std::string &pName, const std::vector<std::v
 	header.push_back("#-------------------------------------------------------");
 	header.push_back("#   pT [GeV]       phi          R_AA   ");
 
-	const std::string path_out = "./results/results" + pName + "/" + pName + "_" + m_collsys + "_sNN=" + m_sNN + "_cent=" + m_centrality + "_xB=" + xbSStr.str() + "_dist.dat";
+	const std::string path_out = "./" + p_name + ".dat";
 
 	std::ofstream file_out(path_out, std::ios_base::out);
 	if (!file_out.is_open()) {
