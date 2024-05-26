@@ -40,30 +40,29 @@ def collect_trento():
 
 	for job_id in range(len(job_dirs)): rmtree(path.join(work_dir, job_dirs[job_id]))
 
-##############################################################################################################################################################
-#function that collects trentoavg results:
 def collect_trentoavg():
+# function that collects trentoavg results
 
-	work_dir = path.abspath('work')
-	job_dirs = glob(path.join(work_dir, 'trentoavgjob*'))
+	work_dir = path.abspath("work")
+	job_dirs = glob(path.join(work_dir, "trentoavgjob*"))
 	job_dirs = sorted(job_dirs, key=lambda x: int(findall("\d+", path.split(x)[-1])[0]))
 
 	while True:
 		sleep(2)
-		if all([path.exists(path.join(job_dir, 'jobdone.info')) for job_dir in job_dirs]): break
+		if all([path.exists(path.join(job_dir, "jobdone.info")) for job_dir in job_dirs]): break
 	sleep(2)
 
-	sd_dir  = path.join(work_dir, 'avgsd')
+	sd_dir  = path.join(work_dir, "avgsd")
 	if not path.exists(sd_dir): mkdir(sd_dir)
-	bcd_dir = path.join(work_dir, 'bcdens')
+	bcd_dir = path.join(work_dir, "bcdens")
 	if not path.exists(bcd_dir): mkdir(bcd_dir)
 
 	for job_id in range(len(job_dirs)):
-		rename(path.join(job_dirs[job_id],     'sdavg.dat'), path.join(sd_dir,      'sdavg{0:d}.dat'.format(job_id)))
-		rename(path.join(job_dirs[job_id], 'bcdensity.dat'), path.join(bcd_dir, 'bcdensity{0:d}.dat'.format(job_id)))
+		rename(path.join(job_dirs[job_id],     "sdavg.dat"), path.join(sd_dir,      f"sdavg{job_id:d}.dat"))
+		rename(path.join(job_dirs[job_id], "bcdensity.dat"), path.join(bcd_dir, f"bcdensity{job_id:d}.dat"))
 
 	for job_dir in job_dirs: rmtree(job_dir)
-	rmtree(path.join(work_dir, 'trentoic'))
+	rmtree(path.join(work_dir, "trentoic"))
 
 ##############################################################################################################################################################
 #function that collects hydro results:
