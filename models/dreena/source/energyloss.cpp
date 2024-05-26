@@ -374,7 +374,7 @@ int energyLoss::loadLColl()
 
 int energyLoss::loadBinCollDensity(interpolationF<double> &binCollDensity)
 {
-	std::string path_in = "binarycolldensities/binarycolldensity_cent=" + m_centrality + ".dat";
+	std::string path_in = "./bcdensity.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open binary collision density file." << std::endl;
@@ -446,7 +446,7 @@ int energyLoss::loadBinCollDensity(interpolationF<double> &binCollDensity)
 
 int energyLoss::loadPhiPoints(std::vector<double> &phiPoints)
 {
-	std::string path_in = "./phiGaussPts/phiptsgauss" + std::to_string(m_phiGridN) + ".dat";
+	std::string path_in = m_srcDirectory + "phiGaussPts/phiptsgauss" + std::to_string(m_phiGridN) + ".dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open phi points file. Aborting..." << std::endl;
@@ -472,7 +472,7 @@ int energyLoss::loadPhiPoints(std::vector<double> &phiPoints)
 
 int energyLoss::loadBinCollPoints(std::vector<std::vector<double>> &bcPoints)
 {
-	std::string path_in = "binarycollpoints/binarycollpoints_cent=" + m_centrality + ".dat";
+	std::string path_in = "bcpoints.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open binary collision points file." << std::endl;
@@ -668,7 +668,7 @@ int energyLoss::generateInitPosPoints()
 
 int energyLoss::loadTempEvol()
 {
-	std::string path_in = "./evols/tempevol_cent=" + m_centrality + ".dat";
+	std::string path_in = "./tempevol.dat";
 	std::ifstream file_in(path_in, std::ios_base::in);
 	if (!file_in.is_open()) {
 		std::cerr << "Error: unable to open temperature evolution file. Aborting..." << std::endl;
