@@ -1,44 +1,42 @@
 #!/usr/bin/env python3
 
-from sys import argv, exit
 from os import path, mkdir, remove, rename, listdir
 from glob import glob
 from re import findall
 from time import sleep
-from shutil import rmtree, copy, copyfile
+from shutil import rmtree
 from subprocess import call
 import numpy as np
 from params import params
 
-##############################################################################################################################################################
-#function that collects trento results:
 def collect_trento():
+# function that collects trento results
 
-	work_dir = path.abspath('work')
-	job_dirs = glob(path.join(work_dir, 'trentojob*'))
+	work_dir = path.abspath("work")
+	job_dirs = glob(path.join(work_dir, "trentojob*"))
 	job_dirs = sorted(job_dirs, key=lambda x: int(findall("\d+", path.split(x)[-1])[0]))
 
 	while True:
 		sleep(2)
-		if all([path.exists(path.join(job_dir, 'jobdone.info')) for job_dir in job_dirs]): break
+		if all([path.exists(path.join(job_dir, "jobdone.info")) for job_dir in job_dirs]): break
 	sleep(2)
 	
 	trento_events = np.empty((0, 6), float)
-	for job_dir in job_dirs: trento_events = np.concatenate((trento_events, np.loadtxt(path.join(job_dir, 'trento_events.dat'))), axis=0)
+	for job_dir in job_dirs: trento_events = np.concatenate((trento_events, np.loadtxt(path.join(job_dir, "trento_events.dat"))), axis=0)
 	sorted_index  = np.lexsort((trento_events[:,5], -trento_events[:,4], -trento_events[:,3], -trento_events[:,2]))
 	trento_events = trento_events[sorted_index]
 	trento_events = np.hstack((np.array(range(0, trento_events.shape[0]))[...,None], trento_events))
-	np.savetxt(path.join(work_dir, 'trento_events.dat'), trento_events, fmt='%6d %4d %6d %3d %3d %.5f %.5f',\
-				header='id_sort job_id event_id npart ncoll TATB b')
+	np.savetxt(path.join(work_dir, "trento_events.dat"), trento_events, fmt="%6d %4d %6d %3d %3d %.5f %.5f",\
+				header="id_sort job_id event_id npart ncoll TATB b")
 
-	dest_dir = path.join(work_dir, 'trentoic')
+	dest_dir = path.join(work_dir, "trentoic")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
 	for tevent in trento_events:
-		rename(path.join(work_dir, 'trentojob{0:0.0f}'.format(tevent[1]), 'eventstemp',    '{0:0.0f}.dat'.format(tevent[2])),\
-				path.join(dest_dir,    '{0:0.0f}.dat'.format(tevent[0])))
-		rename(path.join(work_dir, 'trentojob{0:0.0f}'.format(tevent[1]), 'eventstemp', 'bcp{0:0.0f}.dat'.format(tevent[2])),\
-				path.join(dest_dir, 'bcp{0:0.0f}.dat'.format(tevent[0])))
+		rename(path.join(work_dir, f"trentojob{tevent[1]:0.0f}", "eventstemp",    f"{tevent[2]:0.0f}.dat"),\
+				path.join(dest_dir,    f"{tevent[0]:0.0f}.dat"))
+		rename(path.join(work_dir, f"trentojob{tevent[1]:0.0f}", "eventstemp", f"bcp{tevent[2]:0.0f}.dat"),\
+				path.join(dest_dir, f"bcp{tevent[0]:0.0f}.dat"))
 
 	for job_id in range(len(job_dirs)): rmtree(path.join(work_dir, job_dirs[job_id]))
 
