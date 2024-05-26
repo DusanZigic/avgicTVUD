@@ -108,20 +108,19 @@ def collect_urqmd(hydrojobid):
 
 	for job_dir in job_dirs: rmtree(job_dir)
 
-##############################################################################################################################################################
-#function that collects analysis results:
 def collect_analysis():
+# function that collects analysis results
 
-	work_dir = path.abspath('work')
-	job_dirs = glob(path.join(work_dir, 'analysisjob*'))
+	work_dir = path.abspath("work")
+	job_dirs = glob(path.join(work_dir, "analysisjob*"))
 	job_dirs = sorted(job_dirs, key=lambda x: int(findall("\d+", path.split(x)[-1])[0]))
 
 	while True:
 		sleep(2)
-		if all([path.exists(path.join(job_dir, 'jobdone.info')) for job_dir in job_dirs]): break
+		if all([path.exists(path.join(job_dir, "jobdone.info")) for job_dir in job_dirs]): break
 	sleep(2)
 
-	dest_dir = path.join(work_dir, 'analysis')
+	dest_dir = path.join(work_dir, "analysis")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
 	for job_id in range(len(job_dirs)):
@@ -130,7 +129,7 @@ def collect_analysis():
 		centrality = params['main']['centrality'][job_id].replace('-', '').replace('%', '')
 
 		for aFile in params['analysis']['save_files']:
-			rename(path.join(job_dir, aFile), path.join(dest_dir, aFile.replace('.dat', '{:s}.dat'.format(centrality))))
+			rename(path.join(job_dir, aFile), path.join(dest_dir, aFile.replace(".dat", f"{centrality}.dat")))
 
 		rmtree(job_dir)
 
