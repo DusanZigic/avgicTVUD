@@ -154,17 +154,16 @@ def collect_dreena(job_id):
 
 	rmtree(job_dir)
 
-##############################################################################################################################################################
-#function that collects all model predictions:
 def collect_all():
+# function that collects all model predictions
 
-	src_dir  = path.abspath('work/analysis')
-	run_id   = len([f for f in listdir(path.abspath('')) if path.isdir(f) and 'analysis' in f])
-	dest_dir = path.abspath('analysis{0:d}'.format(run_id))
+	src_dir  = path.abspath("work/analysis")
+	run_id   = len([f for f in listdir(path.abspath("")) if path.isdir(f) and "analysis" in f])
+	dest_dir = path.abspath(f"analysis{run_id:d}")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
 	for aFile in listdir(src_dir): rename(path.join(src_dir, aFile), path.join(dest_dir, aFile))
 
-	rename(path.abspath('work/params.json'), path.join(dest_dir, 'params.json'))
+	rename(path.abspath("work/params.json"), path.join(dest_dir, "params.json"))
 
-	if params['main']['remove_work'] == 1: rmtree(path.abspath('work'))
+	if params['main']['remove_work'] == 1: rmtree(path.abspath("work"))
