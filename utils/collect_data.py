@@ -64,26 +64,25 @@ def collect_trentoavg():
 	for job_dir in job_dirs: rmtree(job_dir)
 	rmtree(path.join(work_dir, "trentoic"))
 
-##############################################################################################################################################################
-#function that collects hydro results:
 def collect_hydro():
+# function that collects hydro results
 
-	work_dir = path.abspath('work')
-	job_dirs = glob(path.join(work_dir, 'hydrojob*'))
+	work_dir = path.abspath("work")
+	job_dirs = glob(path.join(work_dir, "hydrojob*"))
 	job_dirs = sorted(job_dirs, key=lambda x: int(findall("\d+", path.split(x)[-1])[0]))
 
 	while True:
 		sleep(2)
-		if all([path.exists(path.join(job_dir, 'jobdone.info')) for job_dir in job_dirs]): break
+		if all([path.exists(path.join(job_dir, "jobdone.info")) for job_dir in job_dirs]): break
 	sleep(2)
 
-	dest_dir = path.join(work_dir, 'tempevols')
+	dest_dir = path.join(work_dir, "tempevols")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
 	for job_id in range(len(job_dirs)):
 		job_dir = job_dirs[job_id]
-		rename(path.join(job_dir, 'Temp_evo.dat'), path.join(dest_dir, 'tempevol{0:d}.dat'.format(job_id)))
-		filestoremove = list(set(glob(path.join(job_dir, '*'))) - set(glob(path.join(job_dir, 'particles_in_*'))))
+		rename(path.join(job_dir, "Temp_evo.dat"), path.join(dest_dir, f"tempevol{job_id:d}.dat"))
+		filestoremove = list(set(glob(path.join(job_dir, "*"))) - set(glob(path.join(job_dir, "particles_in_*"))))
 		for aFile in filestoremove: remove(aFile)
 
 ##############################################################################################################################################################
