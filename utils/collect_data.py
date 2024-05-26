@@ -133,25 +133,24 @@ def collect_analysis():
 
 		rmtree(job_dir)
 
-##############################################################################################################################################################
-#function that collects energy loss results:
 def collect_dreena(job_id):
+# function that collects energy loss results
 
-	work_dir = path.abspath('work')
-	job_dir  = path.join(work_dir, 'dreenajob{0:d}'.format(job_id))
-	dest_dir = path.join(work_dir, 'analysis')
+	work_dir = path.abspath("work")
+	job_dir  = path.join(work_dir, f"dreenajob{job_id:d}")
+	dest_dir = path.join(work_dir, "analysis")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
 	centrality = params['main']['centrality'][job_id].replace('-', '').replace('%', '')
 
 	while True:
 		sleep(2)
-		if path.exists(path.join(job_dir, 'jobdone.info')): break
+		if path.exists(path.join(job_dir, "jobdone.info")): break
 	sleep(2)
 	
-	rename(path.join(job_dir,  'b.dat'), path.join(dest_dir,  'b{0:s}.dat'.format(centrality)))
-	rename(path.join(job_dir,  'd.dat'), path.join(dest_dir,  'd{0:s}.dat'.format(centrality)))
-	rename(path.join(job_dir, 'ch.dat'), path.join(dest_dir, 'ch{0:s}.dat'.format(centrality)))
+	rename(path.join(job_dir,  "b.dat"), path.join(dest_dir,  f"b{centrality}.dat"))
+	rename(path.join(job_dir,  "d.dat"), path.join(dest_dir,  f"d{centrality}.dat"))
+	# rename(path.join(job_dir, "ch.dat"), path.join(dest_dir, f"ch{centrality}.dat"))
 
 	rmtree(job_dir)
 
