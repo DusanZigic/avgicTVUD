@@ -85,25 +85,25 @@ def collect_hydro():
 		filestoremove = list(set(glob(path.join(job_dir, "*"))) - set(glob(path.join(job_dir, "particles_in_*"))))
 		for aFile in filestoremove: remove(aFile)
 
-##############################################################################################################################################################
-#function that collects urqmd results:
 def collect_urqmd(hydrojobid):
+# function that collects urqmd results
 
-	work_dir = path.abspath('work')
-	job_dirs = glob(path.join(work_dir, 'urqmdjob*'))
+	work_dir = path.abspath("work")
+	job_dirs = glob(path.join(work_dir, "urqmdjob*"))
 	job_dirs = sorted(job_dirs, key=lambda x: int(findall("\d+", path.split(x)[-1])[0]))
 
 	while True:
 		sleep(2)
-		if all([path.exists(path.join(job_dir, 'jobdone.info')) for job_dir in job_dirs]): break
+		if all([path.exists(path.join(job_dir, "jobdone.info")) for job_dir in job_dirs]): break
 	sleep(2)
 
-	dest_dir = path.join(work_dir, 'urqmd')
+	dest_dir = path.join(work_dir, "urqmd")
 	if not path.exists(dest_dir): mkdir(dest_dir)
 
-	commandString  = 'cat '
-	commandString += " ".join([path.join(job_dir, 'particles_out.dat') for job_dir in job_dirs])
-	commandString += " > %s" % path.join(dest_dir, 'particles_out_%d.dat' % hydrojobid)
+	commandString  = "cat "
+	commandString += " ".join([path.join(job_dir, "particles_out.dat") for job_dir in job_dirs])
+	commandString += " > "
+	commandString += path.join(dest_dir, f"particles_out_{hydrojobid:d}.dat")
 	call(commandString, shell=True, cwd=work_dir)
 
 	for job_dir in job_dirs: rmtree(job_dir)
