@@ -66,7 +66,7 @@ def gen_slurm_job_trento(src_dir, jobid):
 		f.write("#\n")
 		f.write("#SBATCH --ntasks=1\n")
 		f.write("#SBATCH --cpus-per-task=1\n")
-		f.write(f"#SBATCH --time={(event_n_per_job*0.01):d}:00:00\n\n")
+		f.write(f"#SBATCH --time={int(event_n_per_job*0.01):d}:00:00\n\n")
 		f.write(f"(cd {trento_src_dir}\n")
 		f.write(f"	./trento -c {path.join(src_dir, 'trento.conf')} > {path.join(src_dir, 'trento_events.dat')}\n")
 		f.write(")\n\n")
