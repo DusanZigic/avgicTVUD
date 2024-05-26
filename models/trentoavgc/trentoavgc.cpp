@@ -157,7 +157,7 @@ int loadBCP(std::vector<std::vector<double>> &bcp, size_t event_id)
 	return 1;
 }
 
-int countBCP(const std::vector<std::vector<double>> &bcp, std::vector<std::vector<double>> &hist)
+int countBCP(std::vector<std::vector<double>> &hist, const std::vector<std::vector<double>> &bcp)
 //function that counts binary collision points into a histogram:
 {
 	for (const auto& xy : bcp) {
