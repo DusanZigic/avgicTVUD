@@ -8,9 +8,9 @@ from params import params
 
 ####################################################################################################################################################
 #TRENTO FUNCTIONS:
-####################################################################################
-#function that generates trento conf file:
+
 def gen_trento_conf(src_dir, jobid):
+# function that generates trento conf file
 
 	cross_section = {
 		200:  4.23,
@@ -25,100 +25,96 @@ def gen_trento_conf(src_dir, jobid):
 	event_n_per_job = event_n_per_job[jobid]
 
 	with open(path.join(src_dir, 'trento.conf'), 'w') as f:
-		f.write('projectile = {}\n'.format(params['trento']['projectile']))
-		f.write('projectile = {}\n'.format(params['trento']['target']))
+		f.write(f"projectile = {params['trento']['projectile']}\n")
+		f.write(f"projectile = {params['trento']['target']}\n")
 		
-		f.write('number-events = %d\n' % event_n_per_job)
+		f.write(f"number-events = {event_n_per_job:d}\n")
 		
-		f.write('grid-max = %f\n' % params['trento']['grid_max'])
-		f.write('grid-step = %f\n' % params['trento']['grid_step'])
+		f.write(f"grid-max = {params['trento']['grid_max']:.6f}\n")
+		f.write(f"grid-step = {params['trento']['grid_step']:.6f}\n")
 		
-		f.write('cross-section = %f\n' % cross_section[params['trento']['ecm']])
+		f.write(f"cross-section = {cross_section[params['trento']['ecm']]:.2f}\n")
 		
-		f.write('reduced-thickness = {:.6f}\n'.format(params['trento']['p']))
-		f.write('normalization = %f\n' % params['trento']['norm'])
-		f.write('fluctuation = %f\n' % params['trento']['k'])
-		f.write('nucleon-width = %f\n' % params['trento']['w'])
-		f.write('nucleon-min-dist = %f\n' % params['trento']['d'])
+		f.write(f"reduced-thickness = {params['trento']['p']:.6f}\n")
+		f.write(f"normalization = {params['trento']['norm']:.6f}\n")
+		f.write(f"fluctuation = {params['trento']['k']:.6f}\n")
+		f.write(f"nucleon-width = {params['trento']['w']:.6f}\n")
+		f.write(f"nucleon-min-dist = {params['trento']['d']:.6f}\n")
 		
-		f.write('ncoll = true\n')
-		f.write('no-header = true\n')
-		f.write('output = %s\n' % path.join(src_dir, 'eventstemp'))
+		f.write("ncoll = true\n")
+		f.write("no-header = true\n")
+		f.write(f"output = {path.join(src_dir, 'eventstemp')}\n")
 		if params['trento']['random_seed'] and params['trento']['random_seed'] > 0:
-			f.write('random-seed = %d\n' % params['trento']['random_seed'])
-####################################################################################
-#function that generates slurm job scripts for trento jobs:
+			f.write(f"random-seed = {params['trento']['random_seed']:d}\n")
+
 def gen_slurm_job_trento(src_dir, jobid):
+#function that generates slurm job scripts for trento jobs
 	
-	trento_src_dir  = path.abspath('models')
-	trento_src_dir  = path.join(trento_src_dir, 'trento', 'build', 'src')
+	trento_src_dir  = path.abspath("models")
+	trento_src_dir  = path.join(trento_src_dir, "trento", "build", "src")
 
 	event_n_per_job = [params['main']['trento_event_n']//params['main']['num_of_trento_jobs']]*params['main']['num_of_trento_jobs']
 	for i in range(params['main']['trento_event_n']-sum(event_n_per_job)):
 		event_n_per_job[i % params['main']['num_of_trento_jobs']] += 1
 	event_n_per_job = event_n_per_job[jobid]
 
-	with open(path.join(src_dir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=trento%d\n' % jobid)
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task=1\n')
-		f.write('#SBATCH --time=%d:00:00\n\n' % (event_n_per_job*0.01))
-		f.write('(cd %s\n' % trento_src_dir)
-		f.write('	./trento -c %s > %s\n' % (path.join(src_dir, 'trento.conf'), path.join(src_dir, 'trento_events.dat')))
-		f.write(')\n\n')
-		f.write('python3 gen_bcp.py\n\n')
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates trento jobs:
+	with open(path.join(src_dir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write(f"#SBATCH --job-name=trento{jobid:d}\n")
+		f.write("#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write("#SBATCH --cpus-per-task=1\n")
+		f.write(f"#SBATCH --time={(event_n_per_job*0.01):d}:00:00\n\n")
+		f.write(f"(cd {trento_src_dir}\n")
+		f.write(f"	./trento -c {path.join(src_dir, 'trento.conf')} > {path.join(src_dir, 'trento_events.dat')}\n")
+		f.write(")\n\n")
+		f.write("python3 gen_bcp.py\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
+
 def gen_trento_jobs():
+#function that generates trento jobs
 	
-	work_dir = path.abspath('work')
+	work_dir = path.abspath("work")
 	if path.exists(work_dir): rmtree(work_dir)
 	mkdir(work_dir)
 
 	#exporting parameters to json file:
 	json_params = json.dumps(params, indent=4)
-	with open(path.join(work_dir, 'params.json'), 'w') as f: f.write(json_params)
+	with open(path.join(work_dir, "params.json"), 'w') as f: f.write(json_params)
 
-	for job_id in range(params['main']['num_of_trento_jobs']):
-		
+	for job_id in range(params['main']['num_of_trento_jobs']):		
 		job_dir = path.join(work_dir, 'trentojob%d' % job_id)
 		if not path.exists(job_dir): mkdir(job_dir)
-
-		copy(path.abspath('utils/gen_bcp.py'), job_dir)
-
+		copy(path.abspath("utils/gen_bcp.py"), job_dir)
 		gen_trento_conf(job_dir, job_id)
 		gen_slurm_job_trento(job_dir, job_id)
-##################################################################################################################
-#function that generates slurm job scripts for trentoavg jobs:
+
 def gen_slurm_job_trentoavg(jobdir, jobid, srcdir, eidlow, eidhigh):
+#function that generates slurm job scripts for trentoavg jobs
 	
-	with open(path.join(jobdir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=trentoavg{0:d}\n'.format(jobid))
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task=1\n')
-		f.write('#SBATCH --time=5:00:00\n\n')
-		f.write('./trentoavgc {0:s} {1:d} {2:d} '.format(srcdir, eidlow, eidhigh))
-		f.write('{0:.2f} {1:.2f} {2:.3f} '.format(*params['trento']['x_hist']))
-		f.write('{0:.2f} {1:.2f} {2:.3f}\n\n'.format(*params['trento']['y_hist']))
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates initial condition averagin jobs:
+	with open(path.join(jobdir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write(f"#SBATCH --job-name=trentoavg{jobid:d}\n")
+		f.write(f"#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write("#SBATCH --cpus-per-task=1\n")
+		f.write("#SBATCH --time=5:00:00\n\n")
+		f.write(f"./trentoavgc {srcdir} {eidlow:d} {eidhigh:d} ")
+		f.write(f"{params['trento']['x_hist'][0]:.6f} {params['trento']['x_hist'][1]:.6f} {params['trento']['x_hist'][2]:.6f} ")
+		f.write(f"{params['trento']['y_hist'][0]:.6f} {params['trento']['y_hist'][1]:.6f} {params['trento']['y_hist'][2]:.6f}\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
+
 def gen_trentoavg_jobs():
+#function that generates initial condition averagin jobs
 
-	work_dir = path.abspath('work')
+	work_dir = path.abspath("work")
 
-	for job_id in range(len(params['main']['centrality'])):
-		
-		job_dir = path.join(work_dir, 'trentoavgjob%d' % job_id)
+	for job_id in range(len(params['main']['centrality'])):		
+		job_dir = path.join(work_dir, f"trentoavgjob{job_id:d}")
 		if not path.exists(job_dir): mkdir(job_dir)
 
 		#exporting parameters to json file:
@@ -126,7 +122,7 @@ def gen_trentoavg_jobs():
 		with open(path.join(job_dir, 'params.json'), 'w') as f: f.write(json_params)
 
 		#copying calculation script:
-		copy(path.abspath('models/trentoavgc/trentoavgc'),  job_dir)
+		copy(path.abspath("models/trentoavgc/trentoavgc"),  job_dir)
 
 		#calculating eventIDs for given centrality:
 		centrality    = params['main']['centrality'][job_id]
@@ -135,7 +131,7 @@ def gen_trentoavg_jobs():
 		event_id_low  = int(cent_low*tot_event_n/100)
 		cent_high     = int(centrality.replace('%', '').split('-')[1])
 		event_id_high = int(cent_high*tot_event_n/100 - 1)
-		src_dir  	  = path.abspath('work/trentoic')
+		src_dir  	  = path.abspath("work/trentoic")
 
 		#exporting slurm job script:
 		gen_slurm_job_trentoavg(job_dir, job_id, src_dir, event_id_low, event_id_high)
