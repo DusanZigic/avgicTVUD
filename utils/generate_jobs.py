@@ -254,7 +254,7 @@ def gen_hydro_jobs():
 #URQMD FUNCTIONS:
 
 def gen_slurm_job_urqmd(src_dir, jobid):
-# function that generates slurm scripts for hydro jobs
+# function that generates slurm scripts for urqmd jobs
 	
 	with open(path.join(src_dir, "jobscript.slurm"), 'w') as f:
 		f.write("#!/bin/bash\n")
@@ -355,61 +355,57 @@ def gen_analysis_jobs():
 
 ####################################################################################################################################################
 #DREENA FUNCTIONS:
-####################################################################################
+
 def gen_dreena_conf(dsrcdir, jobdir):
-	with open(path.join(jobdir, 'dreena.conf'), 'w') as f:
-		f.write('src_dir_path = {0:s}\n'.format(dsrcdir))
-		f.write('sNN = {0:d}GeV\n'.format(params['trento']['ecm']))
-		f.write('xB = {0:.1f}\n'.format(params['dreena']['xB']))
-		f.write('xGridN = {0:d}\n'.format(params['dreena']['xGridN']))
-		f.write('yGridN = {0:d}\n'.format(params['dreena']['yGridN']))
-		f.write('phiGridN = {0:d}\n'.format(params['dreena']['phiGridN']))
-		f.write('TIMESTEP = {0:.2f}\n'.format(params['dreena']['TIMESTEP']))
-		f.write('TCRIT = {0:.3f}\n'.format(params['dreena']['TCRIT']))
-####################################################################################
-def gen_dssffs_conf(dsrcdir, jobdir):
-	with open(path.join(jobdir, 'dssffs.conf'), 'w') as f:
-		f.write('src_dir_path = {0:s}\n'.format(path.join(dsrcdir, 'DSSFFsV5.0m')))
-		f.write('sNN = {0:d}GeV\n'.format(params['trento']['ecm']))
-		f.write('xB = {0:.1f}\n'.format(params['dreena']['xB']))
-####################################################################################
+# function that exports dreena parameters
+	
+	with open(path.join(jobdir, "dreena.conf"), 'w') as f:
+		f.write(f"srcDirectory = {dsrcdir}\n")
+		f.write(f"sNN = {params['trento']['ecm']:d}GeV\n")
+		f.write(f"xB = {params['dreena']['xB']:.6f}\n")
+		f.write(f"xGridN = {params['dreena']['xGridN']:d}\n")
+		f.write(f"yGridN = {params['dreena']['yGridN']:d}\n")
+		f.write(f"phiGridN = {params['dreena']['phiGridN']:d}\n")
+		f.write(f"TIMESTEP = {params['dreena']['TIMESTEP']:.6f}\n")
+		f.write(f"TCRIT = {params['dreena']['TCRIT']:.6f}\n")
+
 def gen_slurm_job_dreena(jobdir, jobid):
-	with open(path.join(jobdir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=eloss%d\n' % jobid)
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task={0:d}\n'.format(params['dreena']['NUM_THREADS']))
-		f.write('#SBATCH --time=1:00:00\n\n')
-		f.write('python3 run_eloss.py\n\n')
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates energy loss jobs:
+# function that generates slurm scripts for dreena jobs
+	
+	with open(path.join(jobdir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write("#SBATCH --job-name=eloss%d\n" % jobid)
+		f.write("#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write(f"#SBATCH --cpus-per-task={params['dreena']['NUM_THREADS']:d}\n")
+		f.write("#SBATCH --time=1:00:00\n\n")
+		f.write("python3 run_eloss.py\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
+
 def gen_dreena_jobs(job_id):
+# function that generates energy loss jobs
 
-	work_dir  = path.abspath('work')
+	work_dir  = path.abspath("work")
 
-	job_dir = path.join(work_dir, 'dreenajob%d' % job_id)
+	job_dir = path.join(work_dir, f"dreenajob{job_id:d}")
 	if not path.exists(job_dir): mkdir(job_dir)
 
 	#copying DREENAA and DSSFFs executables:
-	dreena_src_dir = path.abspath('models/dreena')
-	copy(path.join(dreena_src_dir, 'DREENAA'), job_dir)
-	copy(path.join(dreena_src_dir, 'DSSFFsV5.0m', 'DSSFFs'), job_dir)
+	dreena_src_dir = path.abspath("models/dreena")
+	copy(path.join(dreena_src_dir, "DREENAA"), job_dir)
 
 	#copying run_eloss.py script
-	copy(path.abspath('utils/run_eloss.py'), job_dir)
+	copy(path.abspath("utils/run_eloss.py"), job_dir)
 
 	#exporting parameters to json file:
 	json_params = json.dumps(params, indent=4)
-	with open(path.join(job_dir, 'params.json'), 'w') as f: f.write(json_params)
+	with open(path.join(job_dir, "params.json"), 'w') as f: f.write(json_params)
 
 	#moving binary collsion density and temperature evolution:
-	rename(path.join(work_dir, 'bcdens',    'bcdensity{0:d}.dat'.format(job_id)), path.join(job_dir, 'bcdensity.dat'))
-	rename(path.join(work_dir, 'tempevols',  'tempevol{0:d}.dat'.format(job_id)), path.join(job_dir,  'tempevol.dat'))
+	rename(path.join(work_dir, "bcdens",    f"bcdensity{job_id:d}.dat"), path.join(job_dir, "bcdensity.dat"))
+	rename(path.join(work_dir, "tempevols",  f"tempevol{job_id:d}.dat"), path.join(job_dir,  "tempevol.dat"))
 
 	gen_dreena_conf(dreena_src_dir, job_dir)
-	gen_dssffs_conf(dreena_src_dir, job_dir)
 	gen_slurm_job_dreena(job_dir, job_id)
