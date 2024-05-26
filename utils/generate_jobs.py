@@ -303,50 +303,49 @@ def gen_urqmd_jobs(hydrojobid):
 
 ####################################################################################################################################################
 #ANALYSIS FUNCTIONS:
-####################################################################################
-#function that generates slurm scripts for analysis jobs:
-def gen_slurm_job_analysis(src_dir, jobid):
-	
-	with open(path.join(src_dir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=analysis%d\n' % jobid)
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task=1\n')
-		f.write('#SBATCH --time=5:00:00\n\n')
-		f.write('python3 analyse.py\n')
-		f.write('python3 reference_flow.py qn.dat > intflows.dat\n\n')
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates analysis jobs:
-def gen_analysis_jobs():
 
-	work_dir  = path.abspath('work')
-	urqmd_dir = path.join(work_dir, 'urqmd')
+def gen_slurm_job_analysis(src_dir, jobid):
+# function that generates slurm scripts for analysis jobs
+	
+	with open(path.join(src_dir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write(f"#SBATCH --job-name=analysis{jobid:d}\n")
+		f.write("#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write("#SBATCH --cpus-per-task=1\n")
+		f.write("#SBATCH --time=5:00:00\n\n")
+		f.write("python3 analyse.py\n")
+		f.write("python3 reference_flow.py qn.dat > intflows.dat\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
+
+def gen_analysis_jobs():
+# function that generates analysis job
+
+	work_dir  = path.abspath("work")
+	urqmd_dir = path.join(work_dir, "urqmd")
 
 	for job_id in range(len(params['main']['centrality'])):
 		
-		job_dir = path.join(work_dir, 'analysisjob%d' % job_id)
+		job_dir = path.join(work_dir, f"analysisjob{job_id:d}")
 		if not path.exists(job_dir): mkdir(job_dir)
 
 		#copying analysis scripts:
-		src_dir = path.abspath('models')
-		src_dir = path.join(src_dir, 'analysis')
+		src_dir = path.abspath("models")
+		src_dir = path.join(src_dir, "analysis")
 		for aFile in glob(path.join(src_dir, '*')):
 			if not path.exists(aFile):
-				print('Error: could not find %s scipt. Aborting...' % path.split(aFile)[-1])
+				print(f"Error: could not find {path.split(aFile)[-1]} scipt. Aborting...")
 				return False
-			else:
-				copy(aFile, job_dir)
+			copy(aFile, job_dir)
 
 		#exporting parameters to json file:
 		json_params = json.dumps(params, indent=4)
-		with open(path.join(job_dir, 'params.json'), 'w') as f: f.write(json_params)
+		with open(path.join(job_dir, "params.json"), 'w') as f: f.write(json_params)
 
 		#copying urqmd out particle files:
-		rename(path.join(urqmd_dir, 'particles_out_%d.dat' % job_id), path.join(job_dir, 'particles_out.dat'))
+		rename(path.join(urqmd_dir, f"particles_out_{job_id:d}.dat"), path.join(job_dir, "particles_out.dat"))
 
 		gen_slurm_job_analysis(job_dir, job_id)
 
