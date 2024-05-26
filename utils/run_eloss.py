@@ -47,14 +47,14 @@ if __name__ == '__main__':
 	numthreads = [len([*range(params['dreena']['NUM_THREADS'])][i::3]) for i in range(3)]
 
 	commandStr  = f"export OMP_NUM_THREADS={numthreads[2]:d}; "
-	commandStr += "./DREENAA AverageEL --c=dreena.conf --pName=Bottom; "
-	commandStr += "./DREENAA AverageEL --c=dreena.conf --pName=Charm;"
+	commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Bottom; "
+	commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Charm;"
 	heavyFlavourCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 
-	commandStr  = f"export OMP_NUM_THREADS={numthreads[0]:d}; ./DREENAA AverageEL --c=dreena.conf --pName=LQuarks;"
+	commandStr  = f"export OMP_NUM_THREADS={numthreads[0]:d}; ./DREENAA AverageEL --config=dreena.conf --pName=LQuarks;"
 	lightQuarksCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 
-	commandStr  = f"export OMP_NUM_THREADS={numthreads[1]:d}; ./DREENAA AverageEL --c=dreena.conf --pName=Gluon;"
+	commandStr  = f"export OMP_NUM_THREADS={numthreads[1]:d}; ./DREENAA AverageEL --config=dreena.conf --pName=Gluon;"
 	gluonCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 
 	lightQuarksCommand.wait()
