@@ -71,7 +71,7 @@ def gen_slurm_job_trento(src_dir, jobid):
 		f.write(f"	./trento -c {path.join(src_dir, 'trento.conf')} > {path.join(src_dir, 'trento_events.dat')}\n")
 		f.write(")\n\n")
 		f.write("python3 gen_bcp.py\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_trento_jobs():
 #function that generates trento jobs
@@ -106,7 +106,7 @@ def gen_slurm_job_trentoavg(jobdir, jobid, srcdir, eidlow, eidhigh):
 		f.write(f"./trentoavgc {srcdir} {eidlow:d} {eidhigh:d} ")
 		f.write(f"{params['trento']['x_hist'][0]:.6f} {params['trento']['x_hist'][1]:.6f} {params['trento']['x_hist'][2]:.6f} ")
 		f.write(f"{params['trento']['y_hist'][0]:.6f} {params['trento']['y_hist'][1]:.6f} {params['trento']['y_hist'][2]:.6f}\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_trentoavg_jobs():
 #function that generates initial condition averagin jobs
@@ -187,7 +187,7 @@ def gen_slurm_job_hydro(src_dir, jobid):
 			f.write("python3 stream_ic.py\n\n")
 		f.write("./osu-hydro\n\n")
 		f.write("python3 sample_surface.py\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_hydro_jobs():
 # function that generates osu-hydro jobs
@@ -266,7 +266,7 @@ def gen_slurm_job_urqmd(src_dir, jobid):
 		f.write("#SBATCH --cpus-per-task=1\n")
 		f.write("#SBATCH --time=5:00:00\n\n")
 		f.write(f"./afterburner particles_in_{jobid:d}.dat particles_out.dat\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_urqmd_jobs(hydrojobid):
 # function that generates osu-hydro jobs
@@ -318,7 +318,7 @@ def gen_slurm_job_analysis(src_dir, jobid):
 		f.write("#SBATCH --time=5:00:00\n\n")
 		f.write("python3 analyse.py\n")
 		f.write("python3 reference_flow.py qn.dat > intflows.dat\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_analysis_jobs():
 # function that generates analysis job
@@ -382,7 +382,7 @@ def gen_slurm_job_dreena(jobdir, jobid):
 		f.write(f"#SBATCH --cpus-per-task={params['dreena']['NUM_THREADS']:d}\n")
 		f.write("#SBATCH --time=1:00:00\n\n")
 		f.write("python3 run_eloss.py\n\n")
-		f.write(f"echo {"job done"} > jobdone.info")
+		f.write("echo 'job done' > jobdone.info")
 
 def gen_dreena_jobs(job_id):
 # function that generates energy loss jobs
