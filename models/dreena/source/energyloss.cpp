@@ -23,7 +23,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 	std::vector<std::string> inputs; for (int i=2; i<argc; i++) inputs.push_back(argv[i]);
 
 	if ((inputs.size() == 1) && (inputs[0] == "-h")) {
-		std::cout << "default values: --srcDirectory=./ --collsys=PbPb --sNN=5020GeV --pName=Charm --centrality=30-40% --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
+		std::cout << "default values: --srcDirectory=./ --collsys=PbPb --sNN=5020GeV --pName=Charm --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
 		m_error = true;
 	}
 
@@ -35,12 +35,12 @@ energyLoss::energyLoss(int argc, const char *argv[])
 		inputParams[key] = val;
 	}
 	
-	std::vector<std::string> arguments = {"srcDirectory", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
+	std::vector<std::string> arguments = {"srcDirectory", "collsys", "sNN", "pName", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
 	for (const auto &inputParam : inputParams) {
 		if(std::find(arguments.begin(), arguments.end(), inputParam.first) == arguments.end()) {
 			std::cerr << "Error: provide argument flag: " << inputParam.first << " is not an option." << std::endl;
 			std::cerr << "Valid parameters and default values are: ";
-			std::cerr << "--collsys=PbPb --sNN=5020GeV --pName=Charm --centrality=30-40% --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
+			std::cerr << "--srcDirectory=./ --collsys=PbPb --sNN=5020GeV --pName=Charm --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
 			std::cerr << "For congiguration file use: --config=[pathToConfFile]" << std::endl;
 			m_error = true;
 		}
@@ -53,12 +53,12 @@ energyLoss::energyLoss(int argc, const char *argv[])
 			m_error = true;
 		}
 	}
-	std::vector<std::string> argumentsFile = {"srcDirectory", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
+	std::vector<std::string> argumentsFile = {"srcDirectory", "collsys", "sNN", "pName", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
 	for (const auto &inputParam : inputParamsFile) {
 		if(std::find(argumentsFile.begin(), argumentsFile.end(), inputParam.first) == argumentsFile.end()) {
 			std::cerr << "Error: in configration file provided argument: '" << inputParam.first << "' is not an option." << std::endl;
 			std::cerr << "Valid parameters and default values are: \n";
-			std::cerr << "collsys = PbPb\nsNN = 5020GeV\npName = Charm\ncentrality = 30-40%\nxB = 0.6\nxGridN = 50\nyGridN = 50\nphiGridN = 25\nTIMESTEP = 0.1\nTCRIT = 0.155\n" << std::endl;
+			std::cerr << "srcDirectory = ./\ncollsys = PbPb\nsNN = 5020GeV\npName = Charm\nxB = 0.6\nxGridN = 50\nyGridN = 50\nphiGridN = 25\nTIMESTEP = 0.1\nTCRIT = 0.155\n" << std::endl;
 			m_error = true;
 		}
 	}
@@ -76,9 +76,6 @@ energyLoss::energyLoss(int argc, const char *argv[])
 
 	m_pName = "Charm"; if (inputParamsFile.count("pName") > 0) m_pName = inputParamsFile.at("pName");
 					   if (    inputParams.count("pName") > 0) m_pName =     inputParams.at("pName");
-
-	m_centrality = "30-40%"; if (inputParamsFile.count("centrality") > 0) m_centrality = inputParamsFile.at("centrality");
-						     if (    inputParams.count("centrality") > 0) m_centrality =     inputParams.at("centrality");
 
 	m_xB = 0.6; if (inputParamsFile.count("xB") > 0) m_xB = stod(inputParamsFile.at("xB"));
 				if (    inputParams.count("xB") > 0) m_xB = stod(    inputParams.at("xB"));
@@ -1286,7 +1283,6 @@ int energyLoss::exportResults(const std::string &pName, const std::vector<std::v
 	header.push_back("#collision_system: " + m_collsys);
 	header.push_back("#collision_energy: " + m_sNN);
 	header.push_back("#particle_type: " + p_name);
-	header.push_back("#centrality: " + m_centrality);
 
 	std::stringstream xbSStr; xbSStr << std::fixed << std::setprecision(1) << m_xB;
 	header.push_back("#xB = " + xbSStr.str());
