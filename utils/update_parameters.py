@@ -164,6 +164,11 @@ def update_params():
 	if args.TCRIT     is not None: params['dreena']['TCRIT']       = args.TCRIT
 	if args.TCRIT     is not None: params['dreena']['NUM_THREADS'] = args.NUM_THREADS
 
+	# checking batch system:
+	if params['main']['batch_system'] not in ['slurm', 'local']:
+		print("Error: batch_system parameter must be one of: local, slurm. Aborting...")
+		return False
+
 	#setting parameters that depend on other dictionary values:
 	#freestreaming
 	if params['freestream']['turn_on'] == 1:
