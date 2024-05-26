@@ -23,7 +23,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 	std::vector<std::string> inputs; for (int i=2; i<argc; i++) inputs.push_back(argv[i]);
 
 	if ((inputs.size() == 1) && (inputs[0] == "-h")) {
-		std::cout << "default values: --collsys=PbPb --sNN=5020GeV --pName=Charm --centrality=30-40% --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
+		std::cout << "default values: --srcDirectory=./ --collsys=PbPb --sNN=5020GeV --pName=Charm --centrality=30-40% --xB=0.6 --xGridN=50 --yGridN=50 --phiGridN=25 --TIMESTEP=0.1 --TCRIT=0.155" << std::endl;
 		m_error = true;
 	}
 
@@ -35,7 +35,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 		inputParams[key] = val;
 	}
 	
-	std::vector<std::string> arguments = {"collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
+	std::vector<std::string> arguments = {"srcDirectory", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT", "config", "h"};
 	for (const auto &inputParam : inputParams) {
 		if(std::find(arguments.begin(), arguments.end(), inputParam.first) == arguments.end()) {
 			std::cerr << "Error: provide argument flag: " << inputParam.first << " is not an option." << std::endl;
@@ -53,7 +53,7 @@ energyLoss::energyLoss(int argc, const char *argv[])
 			m_error = true;
 		}
 	}
-	std::vector<std::string> argumentsFile = {"collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
+	std::vector<std::string> argumentsFile = {"srcDirectory", "collsys", "sNN", "pName", "centrality", "xB", "xGridN", "yGridN", "phiGridN", "TIMESTEP", "TCRIT"};
 	for (const auto &inputParam : inputParamsFile) {
 		if(std::find(argumentsFile.begin(), argumentsFile.end(), inputParam.first) == argumentsFile.end()) {
 			std::cerr << "Error: in configration file provided argument: '" << inputParam.first << "' is not an option." << std::endl;
@@ -65,6 +65,9 @@ energyLoss::energyLoss(int argc, const char *argv[])
 
 	//setting parameter values based on config file values and overwriting with command line values:
 	//
+	m_srcDirectory = "./"; if (inputParamsFile.count("srcDirectory") > 0) m_srcDirectory = inputParamsFile.at("srcDirectory");
+						   if (    inputParams.count("srcDirectory") > 0) m_srcDirectory =     inputParams.at("srcDirectory");
+
 	m_collsys = "PbPb"; if (inputParamsFile.count("collsys") > 0) m_collsys = inputParamsFile.at("collsys");
 						if (    inputParams.count("collsys") > 0) m_collsys =     inputParams.at("collsys");
 	
@@ -110,6 +113,8 @@ energyLoss::energyLoss(int argc, const char *argv[])
 	else if (m_pName == "Gluon") m_MC = mu/std::sqrt(2.0);
 	else m_MC = mu/sqrt(6.0);
 	m_TCollConst = T;
+
+	if (m_srcDirectory.back() != '/') m_srcDirectory += "/";
 }
 
 int energyLoss::loadInputsFromFile(const std::string &filePath, std::map<std::string, std::string> &inputParamsFile)
@@ -188,7 +193,7 @@ double energyLoss::productLog(double x) const
 
 int energyLoss::loaddsdpti2(const std::string &pname, interpolationF<double> &dsdpti2int)const 
 {
-	const std::string path_in = "./ptDists/ptDist" + m_sNN + "/ptDist_" + m_sNN + "_" + pname + ".dat";
+	const std::string path_in = m_srcDirectory + "ptDists/ptDist" + m_sNN + "/ptDist_" + m_sNN + "_" + pname + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -228,7 +233,7 @@ int energyLoss::loadLdndx()
 	std::stringstream xBss; xBss << std::fixed << std::setprecision(1) << m_xB;
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/ldndx_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
+	const std::string path_in = m_srcDirectory + "ltables/ldndx_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -281,7 +286,7 @@ int energyLoss::loadLNorm()
 	std::stringstream xBss; xBss << std::fixed << std::setprecision(1) << m_xB;
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/lnorm_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
+	const std::string path_in = m_srcDirectory + "ltables/lnorm_nf=" + nfss.str() + "_" + partName + "_xB=" + xBss.str() + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
@@ -330,7 +335,7 @@ int energyLoss::loadLColl()
 
 	std::stringstream nfss; nfss << std::fixed << std::setprecision(1) << m_nf;
 
-	const std::string path_in = "./ltables/lcoll_nf=" + nfss.str() + "_" + partName + ".dat";
+	const std::string path_in = m_srcDirectory + "ltables/lcoll_nf=" + nfss.str() + "_" + partName + ".dat";
 
 	std::ifstream file_in(path_in);
 	if (!file_in.is_open()) {
