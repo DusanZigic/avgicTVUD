@@ -252,45 +252,45 @@ def gen_hydro_jobs():
 
 ####################################################################################################################################################
 #URQMD FUNCTIONS:
-####################################################################################
-#function that generates slurm scripts for hydro jobs:
-def gen_slurm_job_urqmd(src_dir, jobid):
-	
-	with open(path.join(src_dir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=urqmd%d\n' % jobid)
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task=1\n')
-		f.write('#SBATCH --time=5:00:00\n\n')
-		f.write('./afterburner particles_in_%d.dat particles_out.dat\n\n' % jobid)
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates osu-hydro jobs:
-def gen_urqmd_jobs(hydrojobid):
 
-	work_dir  = path.abspath('work')
-	hydro_dir = path.join(work_dir, 'hydrojob%d' % hydrojobid)
+def gen_slurm_job_urqmd(src_dir, jobid):
+# function that generates slurm scripts for hydro jobs
+	
+	with open(path.join(src_dir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write(f"#SBATCH --job-name=urqmd{jobid:d}\n")
+		f.write("#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write("#SBATCH --cpus-per-task=1\n")
+		f.write("#SBATCH --time=5:00:00\n\n")
+		f.write(f"./afterburner particles_in_{jobid:d}.dat particles_out.dat\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
+
+def gen_urqmd_jobs(hydrojobid):
+# function that generates osu-hydro jobs
+
+	work_dir  = path.abspath("work")
+	hydro_dir = path.join(work_dir, f"hydrojob{hydrojobid:d}")
 
 	for job_id in range(params['main']['num_of_urqmd_jobs']):
 		
 		#generating job directories:
-		job_dir = path.join(work_dir, 'urqmdjob%d' % job_id)
+		job_dir = path.join(work_dir, f"urqmdjob{job_id:d}")
 		if not path.exists(job_dir): mkdir(job_dir)
 
 		#copying freezout particle lists:
-		particle_list_file = path.join(hydro_dir, 'particles_in_%d.dat' % job_id)
+		particle_list_file = path.join(hydro_dir, f"particles_in_{job_id:d}.dat")
 		copy(particle_list_file, job_dir)
 
 		#copying executables:
-		src_dir = path.abspath('models')
-		src_dir = path.join(src_dir, 'urqmd-afterburner', 'build')
-		src_dir = path.join(src_dir, 'hadrontransport', 'bin')
-		for aFile in glob(path.join(src_dir, '*')):
+		src_dir = path.abspath("models")
+		src_dir = path.join(src_dir, "urqmd-afterburner", "build")
+		src_dir = path.join(src_dir, "hadrontransport", "bin")
+		for aFile in glob(path.join(src_dir, "*")):
 			if not path.exists(aFile):
-				print('Error: could not find %s executable. Aborting...' % path.split(aFile)[-1])
+				print(f"Error: could not find {path.split(aFile)[-1]} executable. Aborting...")
 				return False
 			else:
 				copy(aFile, job_dir)
