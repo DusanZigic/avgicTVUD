@@ -184,9 +184,9 @@ def gen_slurm_job_hydro(src_dir, jobid):
 		f.write("#SBATCH --cpus-per-task=1\n")
 		f.write("#SBATCH --time=5:00:00\n\n")
 		if params['freestream']['turn_on'] == 1:
-			f.write("python3 stream_ic.py\n\n")
+			f.write("python3 streamIC.py\n\n")
 		f.write("./osu-hydro\n\n")
-		f.write("python3 sample_surface.py\n\n")
+		f.write("python3 sampleSurface.py\n\n")
 		f.write("echo 'job done' > jobdone.info")
 
 def gen_hydro_jobs():
@@ -237,7 +237,7 @@ def gen_hydro_jobs():
 
 		#copying sample_surface:
 		aFile = path.abspath("models")
-		aFile = path.join(aFile, "frzout", "sample_surface.py")
+		aFile = path.join(aFile, "frzout", "sampleSurface.py")
 		if not path.exists(aFile):
 			print("Error: could not find frzout script. Aborting...")
 			return False
