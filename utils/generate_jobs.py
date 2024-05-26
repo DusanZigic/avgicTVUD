@@ -138,88 +138,88 @@ def gen_trentoavg_jobs():
 
 ####################################################################################################################################################
 #OSU-HYDRO FUNCTIONS:
-####################################################################################
-#function that exports hydro parameters:
+
 def gen_hydro_conf(src_dir):
+# function that exports hydro parameters
 	
-	with open(path.join(src_dir, 'osu-hydro.conf'), 'w') as f:
-		f.write("%.2f\n"   % params['hydro']['T0'])
-		f.write("%d\n"     % params['hydro']['IEin'])
-		f.write("%d\n"     % params['hydro']['InitialURead'])
-		f.write("%d\n\n"   % params['hydro']['Initialpitensor'])
+	with open(path.join(src_dir, "osu-hydro.conf"), 'w') as f:
+		f.write(f"{params['hydro']['T0']:.6f}\n")
+		f.write(f"{params['hydro']['IEin']:d}\n")
+		f.write(f"{params['hydro']['InitialURead']:d}\n")
+		f.write(f"{params['hydro']['Initialpitensor']:d}\n\n")
 
-		f.write("%.3f\n"   % params['hydro']['DT'])
-		f.write("%.2f\n"   % params['hydro']['DXY'])
-		f.write("%d\n\n"   % params['hydro']['NLS'])
+		f.write(f"{params['hydro']['DT']:.6f}\n")
+		f.write(f"{params['hydro']['DXY']:.6f}\n")
+		f.write(f"{params['hydro']['NLS']:d}\n\n")
 
-		f.write("%.3f\n"   % params['hydro']['Edec'])
-		f.write("%d\n"     % params['hydro']['NDT'])
-		f.write("%d\n\n"   % params['hydro']['NDXY'])
+		f.write(f"{params['hydro']['Edec']:.6f}\n")
+		f.write(f"{params['hydro']['NDT']:d}\n")
+		f.write(f"{params['hydro']['NDXY']:d}\n\n")
 
-		f.write("%d\n\n"   % params['hydro']['ViscousEqsType'])
+		f.write(f"{params['hydro']['ViscousEqsType']:d}\n\n")
 
-		f.write("%.3f\n"   % params['hydro']['VisT0'])
-		f.write("%.2f\n"   % params['hydro']['VisHRG'])
-		f.write("%.2f\n"   % params['hydro']['VisMin'])
-		f.write("%.1f\n"   % params['hydro']['VisSlope'])
-		f.write("%.1f\n"   % params['hydro']['VisCrv'])
-		f.write("%.6f\n\n" % params['hydro']['VisBeta'])
+		f.write(f"{params['hydro']['VisT0']:.6f}\n")
+		f.write(f"{params['hydro']['VisHRG']:.6f}\n")
+		f.write(f"{params['hydro']['VisMin']:.6f}\n")
+		f.write(f"{params['hydro']['VisSlope']:.6f}\n")
+		f.write(f"{params['hydro']['VisCrv']:.6f}\n")
+		f.write(f"{params['hydro']['VisBeta']:.6f}\n\n")
 
-		f.write("%.3f\n"   % params['hydro']['VisBulkT0'])
-		f.write("%.3f\n"   % params['hydro']['VisBulkMax'])
-		f.write("%.3f\n"   % params['hydro']['VisBulkWidth'])
-		f.write("%d\n"     % params['hydro']['IRelaxBulk'])
-		f.write("%.1f\n"   % params['hydro']['BulkTau'])
-####################################################################################
-#function that generates slurm scripts for hydro jobs:
+		f.write(f"{params['hydro']['VisBulkT0']:.6f}\n")
+		f.write(f"{params['hydro']['VisBulkMax']:.6f}\n")
+		f.write(f"{params['hydro']['VisBulkWidth']:.6f}\n")
+		f.write(f"{params['hydro']['IRelaxBulk']:d}\n")
+		f.write(f"{params['hydro']['BulkTau']:.6f}\n")
+
 def gen_slurm_job_hydro(src_dir, jobid):
+# function that generates slurm scripts for hydro jobs
 	
-	with open(path.join(src_dir, 'jobscript.slurm'), 'w') as f:
-		f.write('#!/bin/bash\n')
-		f.write('#\n')
-		f.write('#SBATCH --job-name=hydro%d\n' % jobid)
-		f.write('#SBATCH --output=outputfile.txt\n')
-		f.write('#\n')
-		f.write('#SBATCH --ntasks=1\n')
-		f.write('#SBATCH --cpus-per-task=1\n')
-		f.write('#SBATCH --time=5:00:00\n\n')
-		if params['freestream']['turn_on'] == 1: f.write('python3 stream_ic.py\n\n')
-		f.write('./osu-hydro\n\n')
-		f.write('python3 sample_surface.py\n\n')
-		f.write('echo "job done" > jobdone.info')
-####################################################################################
-#function that generates osu-hydro jobs:
-def gen_hydro_jobs():
+	with open(path.join(src_dir, "jobscript.slurm"), 'w') as f:
+		f.write("#!/bin/bash\n")
+		f.write("#\n")
+		f.write(f"#SBATCH --job-name=hydro{jobid:d}\n")
+		f.write("#SBATCH --output=outputfile.txt\n")
+		f.write("#\n")
+		f.write("#SBATCH --ntasks=1\n")
+		f.write("#SBATCH --cpus-per-task=1\n")
+		f.write("#SBATCH --time=5:00:00\n\n")
+		if params['freestream']['turn_on'] == 1:
+			f.write("python3 stream_ic.py\n\n")
+		f.write("./osu-hydro\n\n")
+		f.write("python3 sample_surface.py\n\n")
+		f.write(f"echo {"job done"} > jobdone.info")
 
-	work_dir = path.abspath('work')
+def gen_hydro_jobs():
+# function that generates osu-hydro jobs
+
+	work_dir = path.abspath("work")
 
 	for job_id in range(len(params['main']['centrality'])):
 		
-		job_dir = path.join(work_dir, 'hydrojob%d' % job_id)
+		job_dir = path.join(work_dir, f"hydrojob{job_id:d}")
 		if not path.exists(job_dir): mkdir(job_dir)
 
 		#exporting parameters to json file:
 		json_params = json.dumps(params, indent=4)
-		with open(path.join(job_dir, 'params.json'), 'w') as f: f.write(json_params)
+		with open(path.join(job_dir, "params.json"), 'w') as f: f.write(json_params)
 
 		#copying initial conditions:
-		rename(path.join(work_dir, 'avgsd', 'sdavg{0:d}.dat'.format(job_id)), path.join(job_dir, 'sd.dat'))
+		rename(path.join(work_dir, "avgsd", f"sdavg{job_id:d}.dat"), path.join(job_dir, "sd.dat"))
 
 		#copying freestream script:
 		if params['freestream']['turn_on'] == 1:
-			aFile = path.abspath('models')
-			aFile = path.join(aFile, 'freestream', 'stream_ic.py')
+			aFile = path.abspath("models")
+			aFile = path.join(aFile, "freestream", "streamIC.py")
 			if not path.exists(aFile):
-				print('Error: could not find freestream script. Aborting...')
+				print("Error: could not find freestream script. Aborting...")
 				return False
-			else:
-				copy(aFile, job_dir)
+			copy(aFile, job_dir)
 
 		#copying osu-hydro exec
-		aFile = path.abspath('models')
-		aFile = path.join(aFile, 'osu-hydro', 'build' ,'hydro', 'bin', 'osu-hydro')
+		aFile = path.abspath("models")
+		aFile = path.join(aFile, "osu-hydro", "build" ,"hydro", "bin", "osu-hydro")
 		if not path.exists(aFile):
-			print('Error: could not find osu-hydro executable. Aborting...')
+			print("Error: could not find osu-hydro executable. Aborting...")
 			return False
 		else:
 			copy(aFile, job_dir)
@@ -228,27 +228,25 @@ def gen_hydro_jobs():
 		gen_hydro_conf(job_dir)
 
 		#copying eos
-		aFile = path.abspath('models')
-		aFile = path.join(aFile, 'osu-hydro', 'eos', 'eos.dat')
+		aFile = path.abspath("models")
+		aFile = path.join(aFile, "osu-hydro", "eos", "eos.dat")
 		if not path.exists(aFile):
-			print('Error: could not find eos table. Aborting...')
+			print("Error: could not find eos table. Aborting...")
 			return False
-		else:
-			copy(aFile, job_dir)
+		copy(aFile, job_dir)
 
 		#copying sample_surface:
-		aFile = path.abspath('models')
-		aFile = path.join(aFile, 'frzout', 'sample_surface.py')
+		aFile = path.abspath("models")
+		aFile = path.join(aFile, "frzout", "sample_surface.py")
 		if not path.exists(aFile):
-			print('Error: could not find frzout script. Aborting...')
+			print("Error: could not find frzout script. Aborting...")
 			return False
-		else:
-			copy(aFile, job_dir)
+		copy(aFile, job_dir)
 
 		#generating slurm scripts:
 		gen_slurm_job_hydro(job_dir, job_id)
 
-	rmtree(path.join(work_dir, 'avgsd'))
+	rmtree(path.join(work_dir, "avgsd"))
 
 	return True
 
