@@ -52,6 +52,9 @@ Number of oversamples in [freezout](https://github.com/DusanZigic/frzout/blob/de
 
 Cross-section as a TRENTO parameter is automatically determined based on the dictionary parameter value of collision energy - ecm, based on values from [TRENTO documentation page](http://qcd.phy.duke.edu/trento/usage.html).
 
+> [!CAUTION]
+> intial pT distributions are not provided in this repository, however for heavy-flavour they can be downloaded from this [web interface](http://www.lpthe.jussieu.fr/~cacciari/fonll/fonllform.html) or you can use [this script](https://github.com/DusanZigic/heavyQuarkProduction);
+
 ## <3> outline of the algorithm
 
 First, TRENTO is used to generate initial conditions. TRENTO parameter *trento_event_n* is used to determine number of minimum-bias events.  
