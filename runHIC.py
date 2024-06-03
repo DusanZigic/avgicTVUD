@@ -2,6 +2,7 @@
 
 from utils.prerequisites import prerequisites
 from utils.update_parameters import update_params
+from utils.generate_jobs import generateJobs
 from params import params
 
 from subprocess import call
@@ -12,6 +13,7 @@ if __name__ == '__main__':
 	update_params()
 
 	cp = prerequisites(params)
+	gj = generateJobs(params)
 
 	# checking prerequisites and executiables and recompile:
 	cp.check_prerequisites()
