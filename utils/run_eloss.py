@@ -59,12 +59,7 @@ if __name__ == '__main__':
 
 	lightQuarksCommand.wait()
 	gluonCommand.wait()
-
-	# commandStr  = "export OMP_NUM_THREADS={0:d}; ./DSSFFs --c=dssffs.conf;".format(params['dreena']['NUM_THREADS'])
-	# chargedHadronsCommand  = Popen(commandStr, shell=True, cwd=main_dir)
-
 	heavyFlavourCommand.wait()
-	# chargedHadronsCommand.wait()
 
 	obs = integrateRAA("bottom")
 	exportOBS("bottom", obs)
@@ -72,5 +67,11 @@ if __name__ == '__main__':
 	obs = integrateRAA("charm")
 	exportOBS("charm", obs)
 
-	# obs = integrateRAA("chargedhadrons")
-	# exportOBS("chargedhadrons", obs)
+	if path.exists(path.abspath("dssffs.conf")):
+		commandStr  = "export OMP_NUM_THREADS={0:d}; ./DSSFFs --config=dssffs.conf;".format(params['dreena']['NUM_THREADS'])
+		chargedHadronsCommand  = Popen(commandStr, shell=True, cwd=main_dir)
+		chargedHadronsCommand.wait()
+		obs = integrateRAA("chargedhadrons")
+		exportOBS("chargedhadrons", obs)
+
+
