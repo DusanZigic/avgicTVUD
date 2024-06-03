@@ -13,3 +13,6 @@
 [submodule "models/urqmd-afterburner"]
 	path = models/urqmd-afterburner
 	url = https://github.com/DusanZigic/urqmd-afterburner.git
+[submodule "models/trentoavgc"]
+	path = models/trentoavgc
+	url = https://github.com/DusanZigic/trentoavgc.git
