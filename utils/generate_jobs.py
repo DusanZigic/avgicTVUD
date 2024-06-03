@@ -356,11 +356,11 @@ def gen_analysis_jobs():
 ####################################################################################################################################################
 #DREENA FUNCTIONS:
 
-def gen_dreena_conf(dsrcdir, jobdir):
+def gen_eloss_conf(dreenasrcdir, dssffsdir, jobdir):
 # function that exports dreena parameters
 	
 	with open(path.join(jobdir, "dreena.conf"), 'w') as f:
-		f.write(f"srcDirectory = {dsrcdir}\n")
+		f.write(f"modelDir = {dreenasrcdir}\n")
 		f.write(f"sNN = {params['trento']['ecm']:d}GeV\n")
 		f.write(f"xB = {params['dreena']['xB']:.6f}\n")
 		f.write(f"xGridN = {params['dreena']['xGridN']:d}\n")
@@ -368,6 +368,11 @@ def gen_dreena_conf(dsrcdir, jobdir):
 		f.write(f"phiGridN = {params['dreena']['phiGridN']:d}\n")
 		f.write(f"TIMESTEP = {params['dreena']['TIMESTEP']:.6f}\n")
 		f.write(f"TCRIT = {params['dreena']['TCRIT']:.6f}\n")
+	
+	if path.exists(path.abspath("models/DSSFFs")):
+		with open(path.join(jobdir, "dssffs.conf"), 'w') as f:
+			f.write(f"modelDir = {dssffsdir}\n")
+			f.write(f"sNN = {params['trento']['ecm']:d}GeV\n")
 
 def gen_slurm_job_dreena(jobdir, jobid):
 # function that generates slurm scripts for dreena jobs
@@ -393,8 +398,11 @@ def gen_dreena_jobs(job_id):
 	if not path.exists(job_dir): mkdir(job_dir)
 
 	#copying DREENAA and DSSFFs executables:
-	dreena_src_dir = path.abspath("models/dreena")
+	dreena_src_dir = path.abspath("models/avgictvuddreena")
 	copy(path.join(dreena_src_dir, "DREENAA"), job_dir)
+	dssffs_src_dir = path.abspath("models/DSSFFs")
+	if path.exists(dssffs_src_dir):
+		copy(path.join(dssffs_src_dir, "DSSFFs"), job_dir)
 
 	#copying run_eloss.py script
 	copy(path.abspath("utils/run_eloss.py"), job_dir)
@@ -407,5 +415,5 @@ def gen_dreena_jobs(job_id):
 	rename(path.join(work_dir, "bcdens",    f"bcdensity{job_id:d}.dat"), path.join(job_dir, "bcdensity.dat"))
 	rename(path.join(work_dir, "tempevols",  f"tempevol{job_id:d}.dat"), path.join(job_dir,  "tempevol.dat"))
 
-	gen_dreena_conf(dreena_src_dir, job_dir)
+	gen_eloss_conf(dreena_src_dir, dssffs_src_dir, job_dir)
 	gen_slurm_job_dreena(job_dir, job_id)
