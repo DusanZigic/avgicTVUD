@@ -1,29 +1,22 @@
 #!/usr/bin/env python3
 
-import sys
-from os import path
+from utils.prerequisites import prerequisites
+from utils.update_parameters import update_params
 from params import params
 
 from subprocess import call
 
 if __name__ == '__main__':
 
-	sys.path.insert(1, path.abspath('utils'))
-	import check_prerequisites as cp
-	from update_parameters import update_params
-	import generate_jobs as gj
-	import submit_jobs as sj
-	import collect_data as cd
+	# updating parameters:
+	update_params()
 
-	#####################################################################
-	#updating parameters:
-	if not update_params(): sys.exit()
+	cp = prerequisites(params)
 
-	#####################################################################
-	#checking prerequisites and executiables and recompile:
-	if not cp.check_prerequisites(): sys.exit()
-	if not cp.check_execs():		 sys.exit()
-	if not cp.recompile():			 sys.exit()
+	# checking prerequisites and executiables and recompile:
+	cp.check_prerequisites()
+	cp.check_execs()
+	cp.recompile()
 
 	#####################################################################
 	#running trento:
