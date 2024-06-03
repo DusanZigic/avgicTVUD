@@ -239,6 +239,21 @@ def check_execs():
 			compile_file.close()
 			return False
 	
+	src_dir = path.join(model_dir, "DSSFFs")
+	if path.exists(src_dir):
+		dssffs_check = False
+		for root, dirs, files in walk(src_dir):
+			if 'DSSFFs' in files: dssffs_check = True
+		if not dssffs_check:
+			call('g++ source/*.cpp -fopenmp -O3 -o DSSFFs', shell=True, cwd=src_dir, stdout=compile_file, stderr=compile_file)
+			dssffs_check = False
+			for root, dirs, files in walk(src_dir):
+				if 'DSSFFs' in files: dssffs_check = True
+			if not dssffs_check:
+				print('Error: unable to compile DSSFFs source code. Aborting...')
+				compile_file.close()
+				return False
+	
 	compile_file.close()
 	remove(path.join(model_dir, 'compile.info'))
 	
