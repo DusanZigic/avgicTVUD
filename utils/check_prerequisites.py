@@ -225,7 +225,7 @@ def check_execs():
 		return False
 
 	#checking for DREENAA executables:
-	src_dir = path.join(model_dir, 'dreena')
+	src_dir = path.join(model_dir, 'avgictvuddreena')
 	dreena_check = False
 	for root, dirs, files in walk(src_dir):
 		if 'DREENAA' in files: dreena_check = True
@@ -241,50 +241,6 @@ def check_execs():
 	
 	compile_file.close()
 	remove(path.join(model_dir, 'compile.info'))
-	
-	# checking for ltables:
-	src_dir = path.join(model_dir, "dreena", "ltables")
-	xB = params['dreena']['xB']
-	nf = 2.5 if params['trento']['ecm'] == 200 else 3.0
-	if "ch" in params['dreena']['particles']:
-		if not f"lcoll_nf={nf:.1f}_LQuarks.dat" in listdir(src_dir):
-			print("Error: unable to find LColl table for light quarks. Aborting...")
-			return False
-		if not f"lcoll_nf={nf:.1f}_Gluon.dat" in listdir(src_dir):
-			print("Error: unable to find LColl table for gluons. Aborting...")
-			return False
-		if not f"ldndx_nf={nf:.1f}_LQuarks_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Ldndx table for light quarks. Aborting...")
-			return False
-		if not f"ldndx_nf={nf:.1f}_Gluon_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Ldndx table for gluonss. Aborting...")
-			return False
-		if not f"lnorm_nf={nf:.1f}_LQuarks_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Lnorm table for light quarks. Aborting...")
-			return False
-		if not f"lnorm_nf={nf:.1f}_Gluon_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Lnorm table for gluons. Aborting...")
-			return False
-	if "d" in params['dreena']['particles']:
-		if not f"lcoll_nf={nf:.1f}_Charm.dat" in listdir(src_dir):
-			print("Error: unable to find LColl table for charm quark. Aborting...")
-			return False
-		if not f"ldndx_nf={nf:.1f}_Charm_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Ldndx table for charm quarks. Aborting...")
-			return False
-		if not f"lnorm_nf={nf:.1f}_Charm_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Lnorm table for charm quark. Aborting...")
-			return False
-	if "b" in params['dreena']['particles']:
-		if not f"lcoll_nf={nf:.1f}_Bottom.dat" in listdir(src_dir):
-			print("Error: unable to find LColl table for bottom quark. Aborting...")
-			return False
-		if not f"ldndx_nf={nf:.1f}_Bottom_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Ldndx table for bottom quarks. Aborting...")
-			return False
-		if not f"lnorm_nf={nf:.1f}_Bottom_xB={xB:.1f}.dat" in listdir(src_dir):
-			print("Error: unable to find Lnorm table for bottom quark. Aborting...")
-			return False
 	
 	# checking for initial pT distributions:
 	src_dir = path.join(model_dir, "dreena", "ptDists", f"ptDist{params['trento']['ecm']:d}GeV")
