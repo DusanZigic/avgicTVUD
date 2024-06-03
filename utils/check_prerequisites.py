@@ -258,7 +258,7 @@ def check_execs():
 	remove(path.join(model_dir, 'compile.info'))
 	
 	# checking for initial pT distributions:
-	src_dir = path.join(model_dir, "dreena", "ptDists", f"ptDist{params['trento']['ecm']:d}GeV")
+	src_dir = path.join(model_dir, "avgictvuddreena", "ptDists", f"ptDist{params['trento']['ecm']:d}GeV")
 	if "ch" in params['dreena']['particles']:
 		for pName in ["Down", "DownBar", "Gluon", "Strange", "Up", "UpBar"]:
 			if not f"ptDist_{params['trento']['ecm']:d}GeV_{pName}.dat" in listdir(src_dir):
