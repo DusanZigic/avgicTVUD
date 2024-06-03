@@ -332,13 +332,9 @@ def gen_analysis_jobs():
 		if not path.exists(job_dir): mkdir(job_dir)
 
 		#copying analysis scripts:
-		src_dir = path.abspath("models")
-		src_dir = path.join(src_dir, "analysis")
-		for aFile in glob(path.join(src_dir, '*')):
-			if not path.exists(aFile):
-				print(f"Error: could not find {path.split(aFile)[-1]} scipt. Aborting...")
-				return False
-			copy(aFile, job_dir)
+		src_dir = path.abspath("utils")
+		for aFile in ["analyse.py", "reference_flow.py"]:
+			copy(path.join(src_dir, aFile), job_dir)
 
 		#exporting parameters to json file:
 		json_params = json.dumps(params, indent=4)
