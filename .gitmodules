@@ -16,3 +16,6 @@
 [submodule "models/trentoavgc"]
 	path = models/trentoavgc
 	url = https://github.com/DusanZigic/trentoavgc.git
+[submodule "models/avgictvuddreena"]
+	path = models/avgictvuddreena
+	url = https://github.com/DusanZigic/avgictvuddreena.git
