@@ -67,7 +67,7 @@ if __name__ == '__main__':
 	gluonCommand.wait()
 	heavyFlavourCommand.wait()
 
-	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dsssffs.conf")):
+	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dssffs.conf")):
 		commandStr  = f"export OMP_NUM_THREADS={params['dreena']['NUM_THREADS']:d}; "
 		commandStr += "./DSSFFs --config=dssffs.conf;"
 		call(commandStr, shell=True, cwd=main_dir)
@@ -80,7 +80,7 @@ if __name__ == '__main__':
 		obs = integrateRAA("charm")
 		exportOBS("charm", obs)
 
-	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dsssffs.conf")):
+	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dssffs.conf")):
 		obs = integrateRAA("chargedhadrons")
 		exportOBS("chargedhadrons", obs)
 
