@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 from os import path
-from subprocess import Popen
+from subprocess import Popen, call
 import numpy as np
 import json
 
@@ -67,6 +67,11 @@ if __name__ == '__main__':
 	gluonCommand.wait()
 	heavyFlavourCommand.wait()
 
+	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dsssffs.conf")):
+		commandStr  = f"export OMP_NUM_THREADS={params['dreena']['NUM_THREADS']:d}; "
+		commandStr += "./DSSFFs --config=dssffs.conf;"
+		call(commandStr, shell=True, cwd=main_dir)
+
 	if "b" in params['dreena']['particles']:
 		obs = integrateRAA("bottom")
 		exportOBS("bottom", obs)
@@ -75,11 +80,7 @@ if __name__ == '__main__':
 		obs = integrateRAA("charm")
 		exportOBS("charm", obs)
 
-	if "ch" in params['dreena']['particles']:
-		commandStr  = f"export OMP_NUM_THREADS={params['dreena']['NUM_THREADS']:d}; "
-		commandStr += "./DSSFFs --config=dssffs.conf;"
-		chargedHadronsCommand  = Popen(commandStr, shell=True, cwd=main_dir)
-		chargedHadronsCommand.wait()
+	if "ch" in params['dreena']['particles'] and path.exists(path.abspath("dsssffs.conf")):
 		obs = integrateRAA("chargedhadrons")
 		exportOBS("chargedhadrons", obs)
 

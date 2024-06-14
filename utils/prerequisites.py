@@ -254,10 +254,6 @@ class prerequisites:
 					print(f"Error: unable to find initial pT distribution for {pName.lower().replace('bar', '-bar')} quark. Aborting...")
 					compile_file.close()
 					exit()
-			if not path.exists(path.join(model_dir, "DSSFFs")):
-				print("Error: unable to find DSSFFs source directory. Aborting...")
-				compile_file.close()
-				exit()
 		if "d" in self.params['dreena']['particles']:
 			if not f"ptDist_{self.params['trento']['ecm']:d}GeV_Charm.dat" in listdir(src_dir):
 				print(f"Error: unable to find initial pT distribution for charm quark. Aborting...")
