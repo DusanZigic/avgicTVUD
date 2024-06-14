@@ -200,19 +200,15 @@ def update_params():
 			return False
 
 	##########################################################################################################
-	dreena_particles = ['Bottom', 'Charm', 'LQuarks', 'Gluon']
-
-	#checking if dreena particles parameter is empty, in which case all possible particles are calculated:
+	# dreena:
 	if not params['dreena']['particles'] or len(params['dreena']['particles']) == 0:
-		params['dreena']['particles'] = dreena_particles
+		params['dreena']['particles'] = ["d", "b", "ch"]
 
-	#checking if provided dreena particles parameter is list:
 	if not isinstance(params['dreena']['particles'], list):
 		params['dreena']['particles'] = [params['dreena']['particles']]
 
-	#checking if provided particles parameter is valid:
 	for p in params['dreena']['particles']:
-		if p not in dreena_particles:
+		if p not in ["d", "b", "ch"]:
 			print(f'Error: provided dreena particles parameter, {p}, not valid. Aborting...')
 			return False
 
