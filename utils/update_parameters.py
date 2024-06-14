@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from os import path
+from sys import exit
 import argparse
 from params import params
 
@@ -167,7 +167,7 @@ def update_params():
 	# checking batch system:
 	if params['main']['batch_system'] not in ['slurm', 'local']:
 		print("Error: batch_system parameter must be one of: local, slurm. Aborting...")
-		return False
+		exit()
 
 	#setting parameters that depend on other dictionary values:
 	#freestreaming
@@ -197,7 +197,7 @@ def update_params():
 	for fs in params['analysis']['save_files']:
 		if fs not in analysis_save_files:
 			print(f'Error: provided analysis file to save, {fs}, not valid. Aborting...')
-			return False
+			exit()
 
 	##########################################################################################################
 	# dreena:
@@ -210,9 +210,4 @@ def update_params():
 	for p in params['dreena']['particles']:
 		if p not in ["d", "b", "ch"]:
 			print(f'Error: provided dreena particles parameter, {p}, not valid. Aborting...')
-			return False
-
-	##########################################################################################################
-
-	return True
-###################################################################################################################################
+			exit()
