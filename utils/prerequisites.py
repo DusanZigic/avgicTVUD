@@ -247,7 +247,11 @@ class prerequisites:
 					exit()
 	
 		# checking for initial pT distributions:
-		src_dir = path.join(model_dir, "ebetvuddreena", "ptDists", f"ptDist{self.params['trento']['ecm']:d}GeV")
+		src_dir = path.join(model_dir, "avgictvuddreena", "ptDists", f"ptDist{self.params['trento']['ecm']:d}GeV")
+		if not path.exists(src_dir):
+			print("Error: could not find pT dist directory. Aborting...")
+			compile_file.close()
+			exit()
 		if "ch" in self.params['dreena']['particles']:
 			for pName in ["Down", "DownBar", "Gluon", "Strange", "Up", "UpBar"]:
 				if not f"ptDist_{self.params['trento']['ecm']:d}GeV_{pName}.dat" in listdir(src_dir):
