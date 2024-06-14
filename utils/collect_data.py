@@ -7,6 +7,8 @@ from time import sleep
 from shutil import rmtree
 from subprocess import call
 import numpy as np
+import time
+import json
 
 class collectData:
 	def __init__(self, params):
@@ -152,8 +154,14 @@ class collectData:
 		dest_dir = path.abspath(f"analysis{run_id:d}")
 		if not path.exists(dest_dir): mkdir(dest_dir)
 
-		for aFile in listdir(src_dir): rename(path.join(src_dir, aFile), path.join(dest_dir, aFile))
-
-		rename(path.abspath("work/params.json"), path.join(dest_dir, "params.json"))
+		for aFile in listdir(src_dir):
+			rename(path.join(src_dir, aFile), path.join(dest_dir, aFile))
 
 		if self.params['main']['remove_work'] == 1: rmtree(path.abspath("work"))
+		
+		timing = round(time.time() - self.params['main']['timing'])
+		self.params['main']['timing'] = f"{timing//3600:02}:{timing%3600//60:02}:{timing%60:02}"
+
+		json_params = json.dumps(self.params, indent=4)
+		with open(path.join(dest_dir, "params.json"), 'w') as f:
+			f.write(json_params)
