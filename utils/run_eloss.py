@@ -47,28 +47,37 @@ if __name__ == '__main__':
 	numthreads = [len([*range(params['dreena']['NUM_THREADS'])][i::3]) for i in range(3)]
 
 	commandStr  = f"export OMP_NUM_THREADS={numthreads[2]:d}; "
-	commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Bottom; "
-	commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Charm;"
+	if "b" in params['dreena']['particles']:
+		commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Bottom; "
+	if "d" in params['dreena']['particles']:
+		commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Charm;"
 	heavyFlavourCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 
-	commandStr  = f"export OMP_NUM_THREADS={numthreads[0]:d}; ./DREENAA AverageEL --config=dreena.conf --pName=LQuarks;"
+	commandStr = f"export OMP_NUM_THREADS={numthreads[0]:d}; "
+	if "ch" in params['dreena']['particles']:
+		commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=LQuarks;"
 	lightQuarksCommand  = Popen(commandStr, shell=True, cwd=main_dir)
-
-	commandStr  = f"export OMP_NUM_THREADS={numthreads[1]:d}; ./DREENAA AverageEL --config=dreena.conf --pName=Gluon;"
+	
+	commandStr = f"export OMP_NUM_THREADS={numthreads[1]:d}; "
+	if "ch" in params['dreena']['particles']:
+		commandStr += "./DREENAA AverageEL --config=dreena.conf --pName=Gluon;"
 	gluonCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 
 	lightQuarksCommand.wait()
 	gluonCommand.wait()
 	heavyFlavourCommand.wait()
 
-	obs = integrateRAA("bottom")
-	exportOBS("bottom", obs)
+	if "b" in params['dreena']['particles']:
+		obs = integrateRAA("bottom")
+		exportOBS("bottom", obs)
 
-	obs = integrateRAA("charm")
-	exportOBS("charm", obs)
+	if "d" in params['dreena']['particles']:
+		obs = integrateRAA("charm")
+		exportOBS("charm", obs)
 
-	if path.exists(path.abspath("dssffs.conf")):
-		commandStr  = "export OMP_NUM_THREADS={0:d}; ./DSSFFs --config=dssffs.conf;".format(params['dreena']['NUM_THREADS'])
+	if "ch" in params['dreena']['particles']:
+		commandStr  = f"export OMP_NUM_THREADS={params['dreena']['NUM_THREADS']:d}; "
+		commandStr += "./DSSFFs --config=dssffs.conf;"
 		chargedHadronsCommand  = Popen(commandStr, shell=True, cwd=main_dir)
 		chargedHadronsCommand.wait()
 		obs = integrateRAA("chargedhadrons")
