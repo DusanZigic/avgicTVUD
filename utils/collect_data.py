@@ -141,8 +141,10 @@ class collectData:
 			if path.exists(path.join(job_dir, "jobdone.info")): break
 		sleep(2)
 		
-		rename(path.join(job_dir,  "b.dat"), path.join(dest_dir,  f"b{centrality}.dat"))
-		rename(path.join(job_dir,  "d.dat"), path.join(dest_dir,  f"d{centrality}.dat"))
+		if path.exists(path.join(job_dir, "b.dat")):
+			rename(path.join(job_dir,  "b.dat"), path.join(dest_dir,  f"b{centrality}.dat"))
+		if path.exists(path.join(job_dir, "d.dat")):
+			rename(path.join(job_dir,  "d.dat"), path.join(dest_dir,  f"d{centrality}.dat"))
 		if path.exists(path.join(job_dir, "ch.dat")):
 			rename(path.join(job_dir, "ch.dat"), path.join(dest_dir, f"ch{centrality}.dat"))
 
