@@ -113,7 +113,7 @@ params = {
 			'phiGridN':	      25, #number of phi angles
 			'TIMESTEP':      0.1, #jet's timestep
 			'TCRIT':	   0.155, #critical temperature - below TCRIT jet's energy loss stops
-			'NUM_THREADS':    50, #number of threads; if set to 0, it's value is set to 3*phiGridN since that loop is parallelized
+			'NUM_THREADS':   100, #number of threads; if set to 0, it's value is set to 3*phiGridN since that loop is parallelized
 								  #and there are 3 energy loss calculations running in parallel: heavy flavour, light quarks and gluons
 	}
 }
