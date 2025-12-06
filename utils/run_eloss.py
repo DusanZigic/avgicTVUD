@@ -29,9 +29,9 @@ def exportOBS(pname, obs):
 			if line[0] == '#': header.append(line)
 			else: break
 	p_name = {"bottom": "b", "charm": "d", "chargedhadrons": "ch"}
-	header[0] = header[0].replace(pname, p_name[pname])
-	header[7] = header[7].replace("R_AA", "v_2")
-	header[7] = header[7].replace("phi",  "R_AA")
+	header[2] = header[2].replace(pname, p_name[pname])
+	header[9] = header[9].replace("R_AA", "v_2")
+	header[9] = header[9].replace("phi",  "R_AA")
 	with open(f"{p_name[pname]}.dat", 'w') as f:
 		for h in header:
 			f.write(f"{h}\n")
